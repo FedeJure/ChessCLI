@@ -2,7 +2,7 @@ import os
 import re
 
 inputTranslator = {
-    "" : 0,
+    "1" : 0,
     "2" : 1,
     "3" : 2,
     "4" : 3,
@@ -24,7 +24,6 @@ class Chess:
     def __init__(self, whiteName, blackName, turnRepository) :
         self.sideSize = 8
         self.table = Table()
-        print(self.table)
         self.blackPlayer = Player(blackName, turnRepository)
         self.whitePlayer = Player(whiteName, turnRepository)
 
@@ -62,12 +61,14 @@ class Position:
 
 class TurnRepository:
     def __init__(self, whiteName, blackName):
-        self.turns = [whiteName, blackName]
+        self.turns = [(whiteName, "BLANCAS"), (blackName, "NEGRAS")]
         self.winner = None
 
     def getCurrent(self):
-        current = self.turns[0]
-        return current
+        return self.turns[0][0]
+
+    def getCurrentColor(self):
+        return self.turns[0][1]
     
     def nextTurn(self):
         self.turns.reverse()
@@ -204,9 +205,9 @@ class Rey:
 
 def clearScreen():
     if (os.name == "posix"):
-        system("clear")
+        os.system("clear")
     else :
-        system("cls")
+        os.system("cls")
         
 
 def initGame():
@@ -218,14 +219,14 @@ def initGame():
 
     turnRepository = TurnRepository(whiteName, blackName)
     chess = Chess(whiteName, blackName, turnRepository)
-
     while not turnRepository.finished():
+        clearScreen()
+        print("            Turno de "+ turnRepository.getCurrent()+" - "+turnRepository.getCurrentColor())
+        print(chess)
         played = False
         while not played:
             userInput = raw_input("Juega "+turnRepository.getCurrent()+" > ")
             played = chess.playTurn(userInput)
-
-        print(chess)
         turnRepository.nextTurn()
 
 
